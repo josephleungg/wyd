@@ -1,138 +1,120 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function WrappedScreen() {
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 bg-white">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Header Section */}
-        <View className="pt-16 pb-8 px-6 bg-primary">
-          <View className="items-center mb-6">
+        <Image
+          source={require('@/assets/images/wrapped_header.png')}
+          style={{ width: '100%', height: 250 }}
+          contentFit="cover"
+        />
+
+        <View className="flex-col bg-primary m-4 py-6 px-10 gap-2 rounded-3xl">
+          <Text className="font-semibold text-[#9B4F61] text-lg">
+            hello Dawg. your week so far is
+          </Text>
+          <Text className="font-extrabold text-[#132740] text-5xl mt-2">
+            All Good
+          </Text>
+
+          {/* Line bars */}
+          <View className="flex-row justify-between mt-6 gap-2">
+            <View style={[styles.line, { backgroundColor: '#132740', width: 50 }]} />
+            <View style={[styles.line, { backgroundColor: '#233F73', width: 50 }]} />
+            <View style={[styles.line, { backgroundColor: '#3B6BA1', width: 50 }]} />
+            <View style={[styles.line, { backgroundColor: '#7394BE', width: 50 }]} />
+            <View style={[styles.line, { backgroundColor: '#B6C1D3', width: 80 }]} />
+          </View>
+        </View>
+
+        <View className='flex flex-row items-center gap-6 m-8'>
+          <View className='flex-1'>
+            <Text className='text-4xl font-bold'>we chatted for a total of</Text>
+          </View>
+          <View className='flex-1 flex-col items-center'>
+            <Text className='text-7xl font-black text-tertiary scale-y-stretch'>132</Text>
+            <Text className='text-xl font-bold'>minutes this week</Text>
+          </View>
+        </View>
+
+        <View className='flex flex-row items-center gap-6 m-8'>
+          <View className='flex-1'>
+            <Text className='text-7xl font-black text-tertiary scale-y-stretch'>1321</Text>
+          </View>
+          <View className='flex-1'>
+            <Text className='text-xl font-bold'><Text className='text-3xl font-bold'>words.</Text> that's longer than a short story</Text>
+          </View>
+        </View>
+
+        <View className='flex flex-row items-center m-8 gap-8'>
+          <View className='flex-1 flex-col items-center gap-12'>
             <Image
-              source={require('../../assets/images/wyd_logo.png')}
-              style={{ width: 80, height: 80 }}
-              className="mb-4"
+              source={require('@/assets/images/flower_icon.png')}
+              style={{ width: 100, height: 100 }}
             />
-            <Text className="text-2xl font-bold text-secondary text-center">
-              Your Week Wrapped
-            </Text>
-            <Text className="text-gray-600 text-center mt-2">
-              Discover insights from your conversations
+            <Text className='text-xl font-normal'>this is a another quote the user has said in their calls said using <Text className='font-bold'>keyword</Text></Text>
+            <Image
+              source={require('@/assets/images/entries_icon.png')}
+              style={{ width: 100, height: 100 }}
+            />
+          </View>
+
+          <View className="absolute inset-y-0 left-1/2 w-[2px] bg-tertiary" />
+          <AntDesign
+            name="caret-down"
+            size={28}
+            color="#B85C71"
+            style={{
+              position: 'absolute',
+              bottom: -20,
+              left: '50%',
+              transform: [{ translateX: -13 }], // centers arrow
+            }}
+          />
+
+          <View className='flex-1 flex-col items-center gap-12'>
+            <Text className='text-xl font-normal'>this is a quote the user said using <Text className='font-bold'>keyword</Text></Text>
+            <Image
+              source={require('@/assets/images/medal.png')}
+              style={{ width: 100, height: 100 }}
+            />
+            <Text className='text-xl font-normal'>this <Text className='font-bold'>keyword</Text> has been used by the user in the calls and the ai picked up on it</Text>
+          </View>
+        </View>
+
+        <View className='flex flex-col items-center justify-center m-16'>
+          <Text className='text-7xl font-semibold text-tertiary'>"keyword"</Text>
+          <Text className='text-xl font-bold'>was one thing you talked about a lot</Text>
+        </View>
+
+        <Image
+          source={require('@/assets/images/mood_forecast.png')}
+          style={{ width: '100%', height: 170 }}
+          contentFit="cover"
+        />
+
+        <View className="flex-row my-12">
+          <View className="bg-tertiary rounded-r-full justify-center py-32 px-12">
+            <Text className="text-white font-bold text-5xl">Next{'\n'}Week:</Text>
+          </View>
+          <View className="flex-1 bg-white justify-center px-6 py-10 rounded-r-3xl">
+            <Text className="text-2xl font-semibold">
+              Since you felt so good after your walk in the park, maybe try another one this weekend?
             </Text>
           </View>
         </View>
 
-        {/* Stats Cards - Alternating Layout */}
-        <View className="px-6 pb-8">
-          
-          {/* Left Aligned Card */}
-          <View className="mb-6">
-            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
-              <Text className="text-4xl font-bold text-tertiary mb-2">127</Text>
-              <Text className="text-secondary font-medium">
-                minutes of conversations this week
-              </Text>
-            </View>
-          </View>
-
-          {/* Right Aligned Card */}
-          <View className="mb-6">
-            <View className="bg-white rounded-2xl p-6 shadow-sm ml-12">
-              <Text className="text-4xl font-bold text-tertiary mb-2">2,847</Text>
-              <Text className="text-secondary font-medium">
-                words spoken. That's longer than a short story!
-              </Text>
-            </View>
-          </View>
-
-          {/* Left Aligned Card */}
-          <View className="mb-6">
-            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
-              <Text className="text-2xl font-bold text-secondary mb-3">
-                Most Used Word
-              </Text>
-              <Text className="text-5xl font-bold text-tertiary mb-2">"amazing"</Text>
-              <Text className="text-gray-600">
-                Used 23 times this week
-              </Text>
-            </View>
-          </View>
-
-          {/* Right Aligned Card */}
-          <View className="mb-6">
-            <View className="bg-white rounded-2xl p-6 shadow-sm ml-12">
-              <Text className="text-2xl font-bold text-secondary mb-3">
-                Mood Breakdown
-              </Text>
-              <View className="space-y-2">
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-600">😊 Positive</Text>
-                  <Text className="font-bold text-secondary">68%</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-600">😐 Neutral</Text>
-                  <Text className="font-bold text-secondary">24%</Text>
-                </View>
-                <View className="flex-row justify-between">
-                  <Text className="text-gray-600">😔 Negative</Text>
-                  <Text className="font-bold text-secondary">8%</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Left Aligned Card */}
-          <View className="mb-6">
-            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
-              <Text className="text-2xl font-bold text-secondary mb-3">
-                Conversation Topics
-              </Text>
-              <View className="flex-row flex-wrap gap-2">
-                <View className="bg-primary px-3 py-1 rounded-full">
-                  <Text className="text-secondary text-sm">work</Text>
-                </View>
-                <View className="bg-primary px-3 py-1 rounded-full">
-                  <Text className="text-secondary text-sm">friends</Text>
-                </View>
-                <View className="bg-primary px-3 py-1 rounded-full">
-                  <Text className="text-secondary text-sm">goals</Text>
-                </View>
-                <View className="bg-primary px-3 py-1 rounded-full">
-                  <Text className="text-secondary text-sm">travel</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Right Aligned Card - Quote */}
-          <View className="mb-6">
-            <View className="bg-tertiary rounded-2xl p-6 shadow-sm ml-12">
-              <Text className="text-3xl text-white mb-3">"</Text>
-              <Text className="text-white text-lg italic mb-3">
-                I want to be more intentional with my time and really focus on what matters.
-              </Text>
-              <Text className="text-pink-200 text-sm">
-                - You, on Tuesday
-              </Text>
-            </View>
-          </View>
-
-          {/* Full Width Summary Card */}
-          <View className="mb-8">
-            <View className="bg-secondary rounded-2xl p-6 shadow-sm">
-              <Text className="text-2xl font-bold text-white mb-3">
-                This Week's Insight
-              </Text>
-              <Text className="text-gray-200 text-lg leading-relaxed">
-                You've been reflecting a lot on personal growth and making meaningful connections. 
-                Your conversations show a clear focus on building better habits and being more present 
-                in your daily life.
-              </Text>
-            </View>
-          </View>
-
-        </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  line: {
+    height: 5,
+    borderRadius: 10,
+  },
+});
