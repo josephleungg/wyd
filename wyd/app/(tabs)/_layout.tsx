@@ -10,6 +10,8 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+
+    // this is the navbar
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
