@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from routers import auth, convai
+from routers import auth, convai, entries
 
 app = FastAPI()
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(convai.router, prefix="/convai", tags=["convai"])
+app.include_router(entries.router, prefix="/entries", tags=["entries"])
 
 @app.get("/")
 async def root():
