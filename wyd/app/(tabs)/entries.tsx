@@ -152,6 +152,8 @@ interface Entry {
   image: string | number; // url to the photo or require() asset
   fullContent: string;
   content: string; // shortened content for display
+  type: string;
+  sentiment: string;
 }
 
 export default function EntriesNewScreen() {
@@ -167,44 +169,56 @@ export default function EntriesNewScreen() {
     { 
       id: 1, 
       date: "Oct 6, 2025", 
-      image: require('@/assets/IMG_9918.jpg'), // Using your first JPG image
+      image: "", // Using your first JPG image
       fullContent: "Today was such a beautiful day! I captured this amazing moment that really made me reflect on how grateful I am for the little things in life. Sometimes the best memories come from the most unexpected places.",
-      content: get_shortened_content("Today was such a beautiful day! I captured this amazing moment that really made me reflect on how grateful I am for the little things in life. Sometimes the best memories come from the most unexpected places.")
+      content: get_shortened_content("Today was such a beautiful day! I captured this amazing moment that really made me reflect on how grateful I am for the little things in life. Sometimes the best memories come from the most unexpected places."),
+      type: "gratitude",
+      sentiment: "positive"
     },
     { 
       id: 2, 
       date: "Oct 5, 2025", 
-      image: require('@/assets/IMG_9919.jpg'), // Using your second JPG image
+      image: "", // Using your second JPG image
       fullContent: "Had an incredible experience today that I wanted to remember forever. This photo captures exactly how I was feeling - peaceful, content, and truly present in the moment.",
-      content: get_shortened_content("Had an incredible experience today that I wanted to remember forever. This photo captures exactly how I was feeling - peaceful, content, and truly present in the moment.")
+      content: get_shortened_content("Had an incredible experience today that I wanted to remember forever. This photo captures exactly how I was feeling - peaceful, content, and truly present in the moment."),
+      type: "reflection",
+      sentiment: "positive"
     },
     { 
       id: 3, 
       date: "Oct 4, 2025", 
       image: "", // placeholder for photo URL
       fullContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.",
-      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.")
+      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla."),
+      type: "thoughts",
+      sentiment: "neutral"
     },
     { 
       id: 4, 
       date: "Oct 3, 2025", 
       image: "", // placeholder for photo URL
       fullContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.",
-      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.")
+      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla."),
+      type: "routine",
+      sentiment: "neutral"
     },
     { 
       id: 5, 
       date: "Oct 4, 2025", 
       image: "", // placeholder for photo URL
       fullContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla.",
-      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla.")
+      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla."),
+      type: "work",
+      sentiment: "positive"
     },
     { 
       id: 6, 
       date: "Oct 2, 2025", 
       image: "", // placeholder for photo URL
       fullContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.",
-      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.")
+      content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla."),
+      type: "challenges",
+      sentiment: "negative"
     }
   ];
 
@@ -221,10 +235,10 @@ export default function EntriesNewScreen() {
       <View className="flex-row items-center px-6 pb-6 pt-16">
         <Image
           source={require('@/assets/images/entries_icon.png')}
-          className="w-12 h-12 mr-3"
+          className="w-16 h-16 -rotate-90 mr-1"
           resizeMode="contain"
         />
-        <Text className="text-3xl font-bold text-gray-800">entries</Text>
+        <Text className="text-3xl font-bold text-secondary">entries</Text>
       </View>
 
       {/* Content */}

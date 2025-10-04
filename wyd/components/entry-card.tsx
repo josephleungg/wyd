@@ -7,6 +7,8 @@ interface Entry {
   image: string | number; // url to the photo or require() asset
   fullContent: string;
   content: string;
+  type: string;
+  sentiment: string;
 }
 
 interface EntryCardProps {
@@ -28,8 +30,11 @@ export default function EntryCard({ item, cardWidth }: EntryCardProps) {
       pathname: "/entry/[id]",
       params: {
         id: item.id,
+        title: item.date, // Using date as title for consistency
         content: item.fullContent,
-        date: item.date
+        date: item.date,
+        sentiment: item.sentiment,
+        type: item.type
       }
     });
   };
@@ -37,16 +42,14 @@ export default function EntryCard({ item, cardWidth }: EntryCardProps) {
   return (
     <TouchableOpacity 
       onPress={handlePress}
-      className="mb-4 overflow-hidden"
+      className="mb-4 overflow-hidden border border-gray-100 rounded-lg bg-white shadow-sm"
       style={{ 
-        width: cardWidth,
-        borderWidth: 1,
-        borderColor: '#f3f4f6' // very light gray
+        width: cardWidth
       }}
     >
       {/* Image or colored background area */}
       <View 
-        className="h-48 w-full" 
+        className="h-48 w-full flex items-center justify-center" 
         style={{ 
           backgroundColor: item.image ? 'transparent' : getRandomBackgroundColor(item.id)
         }}
@@ -54,10 +57,16 @@ export default function EntryCard({ item, cardWidth }: EntryCardProps) {
         {item.image ? (
           <Image
             source={typeof item.image === 'string' ? { uri: item.image } : item.image}
-            className="w-full h-full"
-            resizeMode="cover"
+            className="w-16 h-16 -rotate-45 opacity-80"
+            resizeMode="contain"
           />
-        ) : null}
+        ) : (
+          <Image
+            source={require('@/assets/images/wyd_logo.png')}
+            className="w-16 h-16 -rotate-45 opacity-60"
+            resizeMode="contain"
+          />
+        )}
       </View>
       
       {/* Content area */}
