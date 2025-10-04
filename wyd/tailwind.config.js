@@ -10,6 +10,9 @@ module.exports = {
         secondary: '#191E44', // dark blue
         tertiary: '#B85C71' // dark pink
       },
+      scale: {
+        'stretch': '1.2',
+      },
     },
   },
   plugins: [],
