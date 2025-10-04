@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple ElevenLabs Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        #logs { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; 
+                margin-top: 20px; font-family: monospace; font-size: 12px; background: #f5f5f5; }
+        #status { font-weight: bold; margin: 10px 0; padding: 10px; background: #e9ecef; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<h1>Simple ElevenLabs ConvAI Test</h1>
+
+<div id="status">Not Connected</div>
+
+Configure your ElevenLabs settings first! You need:
+<ul>
+<li>Valid API key with Conversational AI access</li>
+<li>Agent ID that exists in your account</li>
+<li>Agent configured for Conversational AI (not just TTS)</li>
+</ul>
+
+<button id="connect">Connect to ElevenLabs</button>
+<button id="test-tts">Test Text-to-Speech</button>
+<button id="start-mic" disabled>Start Microphone</button>
+<button id="stop-mic" disabled>Stop Microphone</button>
+
+<div id="logs"></div>
+
+<script>
+let ws = null;
+const logs = document.getElementById('logs');
+const status = document.getElementById('status');
+let isRecording = false;
+let audioContext = null;
+let processor = null;
+let stream = null;
+
+function log(message) {
+    const time = new Date().toLocaleTimeString();
+    logs.innerHTML += `<div>${time}: ${message}</div>`;
+    logs.scrollTop = logs.scrollHeight;
+    console.log(message);
+}
+
+function updateStatus(msg, color = 'black') {
+    status.textContent = msg;
+    status.style.color = color;
+}
+
+document.getElementById('test-tts').onclick = () => {
+    try {
+        const utterance = new SpeechSynthesisUtterance("Text to speech is working correctly!");
+        speechSynthesis.speak(utterance);
+        log("✅ TTS test successful");
+    } catch (error) {
+        log(`❌ TTS test failed: ${error.message}`);
+    }
+};
+
+document.getElementById('connect').onclick = () => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        log("Already connected!");
+        return;
+    }
+    
+    log("🔌 Connecting to WebSocket...");
+    ws = new WebSocket("ws://localhost:8000/convai/ws");
+    
+    ws.onopen = () => {
+        log("✅ WebSocket connected");
+        updateStatus("Connected to Server", "green");
+        document.getElementById('start-mic').disabled = false;
+        
+        log("🔧 Testing ElevenLabs configuration...");
+    };
+    
+    ws.onclose = (event) => {
+        log(`❌ WebSocket closed: ${event.code} - ${event.reason}`);
+        updateStatus("Disconnected", "red");
+        document.getElementById('start-mic').disabled = true;
+        document.getElementById('stop-mic').disabled = true;
+    };
+    
+    ws.onerror = (error) => {
+        log(`❌ WebSocket error: ${error}`);
+        updateStatus("Connection Error", "red");
+    };
+    
+    ws.onmessage = (event) => {
+        try {
+            if (event.data instanceof ArrayBuffer) {
+                log(`📦 Received binary data: ${event.data.byteLength} bytes`);
+            } else {
+                const data = JSON.parse(event.data);
+                log(`📦 Received: ${data.type || 'unknown'}`);
+                
+                log(`📄 Full message: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.type === 'conversation_initiation_metadata') {
+                    log("🤖 AI agent connected");
+                    updateStatus("AI Agent Ready", "blue");
+                }
+                else if (data.type === 'user_transcript') {
+                    if (data.user_transcript && data.user_transcript.text) {
+                        log(`👤 You said: "${data.user_transcript.text}"`);
+                    }
+                }
+                else if (data.type === 'agent_response') {
+                    if (data.agent_response && data.agent_response.text) {
+                        log(`🤖 AI replied: "${data.agent_response.text}"`);
+                        // Use TTS to speak the response
+                        const utterance = new SpeechSynthesisUtterance(data.agent_response.text);
+                        speechSynthesis.speak(utterance);
+                    }
+                }
+                else if (data.type === 'audio') {
+                    log("🎵 Audio message received");
+                    if (data.audio_event && data.audio_event.audio_base_64) {
+                        log(`🎵 Audio data: ${data.audio_event.audio_base_64.length} chars`);
+                        
+                        const audioBase64 = data.audio_event.audio_base_64;
+                        
+                        const tryPCMAudio = async () => {
+                            try {
+                                const binaryString = atob(audioBase64);
+                                const audioBytes = new Uint8Array(binaryString.length);
+                                for (let i = 0; i < binaryString.length; i++) {
+                                    audioBytes[i] = binaryString.charCodeAt(i);
+                                }
+                                
+                                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                                
+                                if (audioContext.state === 'suspended') {
+                                    await audioContext.resume();
+                                }
+                                
+                                const frameCount = audioBytes.length / 2;
+                                const audioBuffer = audioContext.createBuffer(1, frameCount, 16000);
+                                const channelData = audioBuffer.getChannelData(0);
+                                
+                                for (let i = 0; i < frameCount; i++) {
+                                    const sample = (audioBytes[i * 2] | (audioBytes[i * 2 + 1] << 8));
+                                    channelData[i] = sample < 32768 ? sample / 32767 : (sample - 65536) / 32768;
+                                }
+                                
+                                const source = audioContext.createBufferSource();
+                                source.buffer = audioBuffer;
+                                source.connect(audioContext.destination);
+                                source.start();
+                                
+                                log("🔊 Playing ElevenLabs PCM audio");
+                                return true;
+                                
+                            } catch (pcmError) {
+                                log(`❌ PCM playback failed: ${pcmError.message}`);
+                                return false;
+                            }
+                        };
+                        
+                        const useTTSFallback = () => {
+                            if (data.agent_response && data.agent_response.text) {
+                                log("🔄 Using TTS fallback for audio");
+                                const utterance = new SpeechSynthesisUtterance(data.agent_response.text);
+                                speechSynthesis.speak(utterance);
+                                return true;
+                            }
+                            return false;
+                        };
+                        
+                        tryPCMAudio().then(success => {
+                            if (!success) {
+                                useTTSFallback();
+                            }
+                        });
+                        
+                    } else {
+                        log("❌ No audio data found in audio message");
+                    }
+                }
+                else if (data.type === 'interruption') {
+                    log("⏸️ Conversation interrupted");
+                }
+                else {
+                    log(`❓ Unknown message type: ${data.type}`);
+                }
+            }
+        } catch (error) {
+            log(`❌ Message parsing error: ${error.message}`);
+        }
+    };
+};
+
+document.getElementById('start-mic').onclick = async () => {
+    if (isRecording) {
+        log("Already recording!");
+        return;
+    }
+    
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        log("❌ Not connected to server!");
+        return;
+    }
+    
+    try {
+        log("🎤 Starting microphone...");
+        
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                sampleRate: 16000,
+                channelCount: 1,
+                echoCancellation: true,
+                noiseSuppression: true
+            }
+        });
+        
+        audioContext = new AudioContext({ sampleRate: 16000 });
+        const source = audioContext.createMediaStreamSource(stream);
+        processor = audioContext.createScriptProcessor(4096, 1, 1);
+        
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+        
+        processor.onaudioprocess = (e) => {
+            if (ws.readyState === WebSocket.OPEN) {
+                const input = e.inputBuffer.getChannelData(0);
+                const buffer = new ArrayBuffer(input.length * 2);
+                const view = new DataView(buffer);
+
+                for (let i = 0; i < input.length; i++) {
+                    const s = Math.max(-1, Math.min(1, input[i]));
+                    view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+                }
+
+                const base64Audio = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+                ws.send(JSON.stringify({
+                    type: "user_audio_chunk",
+                    audio_chunk: base64Audio
+                }));
+            }
+        };
+        
+        isRecording = true;
+        document.getElementById('start-mic').disabled = true;
+        document.getElementById('stop-mic').disabled = false;
+        updateStatus("Recording... Speak now!", "orange");
+        log("✅ Microphone started - speak now!");
+        
+    } catch (error) {
+        log(`❌ Microphone error: ${error.message}`);
+    }
+};
+
+document.getElementById('stop-mic').onclick = () => {
+    if (!isRecording) {
+        log("Not recording!");
+        return;
+    }
+    
+    try {
+        if (processor) {
+            processor.disconnect();
+            processor = null;
+        }
+        
+        if (audioContext) {
+            audioContext.close();
+            audioContext = null;
+        }
+        
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        
+        isRecording = false;
+        document.getElementById('start-mic').disabled = false;
+        document.getElementById('stop-mic').disabled = true;
+        updateStatus("Connected to Server", "green");
+        log("⏹️ Microphone stopped");
+        
+    } catch (error) {
+        log(`❌ Stop error: ${error.message}`);
+    }
+};
+</script>
+</body>
+</html>
