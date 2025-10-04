@@ -13,8 +13,8 @@ export default function TabLayout() {
     // this is the navbar
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#B85C71",
-        tabBarInactiveTintColor: "#191E44",
+        tabBarActiveTintColor: "#191E44",
+        tabBarInactiveTintColor: "#B85C71",
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
@@ -33,7 +33,6 @@ export default function TabLayout() {
           tabBarLabelStyle: {
             marginTop: 5,
             fontSize: 10,
-            color: '#191E44'
           }
         }}
       />
@@ -74,7 +73,6 @@ export default function TabLayout() {
           tabBarLabelStyle: {
             marginTop: 5,
             fontSize: 10,
-            color: '#191E44'
           },
         }}
       />
