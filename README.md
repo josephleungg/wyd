@@ -7,3 +7,17 @@ Python, FastAPI, SQLAlchemy, Alembic, NeonDB (Postgres), ElevenLabs
 
 ### frontend (mobile app)
 React-Native (Expo)
+
+### installation
+```bash
+$ cd backend ; python -m venv .venv # create virtual env
+$ source .venv/bin/activate # unix/linux
+> .venv\Scripts\activate # windows
+$ pip install -r requirements.txt # install dependencies for app
+$ fastapi dev # or fastapi run for prod
+
+# running the react native app on expo
+$ cd frontend
+$ npm i
+$ npm run start # or npx expo (open qr code or open on browser)
+```
