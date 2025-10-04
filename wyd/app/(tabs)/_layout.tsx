@@ -1,10 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { FontAwesome5 } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { View } from 'react-native';
 
@@ -44,6 +41,8 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: '',
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
           tabBarIcon: ({ color }) => (
             <View
               style={{
