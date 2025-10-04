@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Image } from 'r
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Constants from 'expo-constants';
 
 export default function CallSummaryScreen() {
@@ -131,7 +133,7 @@ export default function CallSummaryScreen() {
         {/* Photo Upload Area */}
         <TouchableOpacity
           onPress={showImageOptions}
-          className="w-80 h-80 border-2 border-dashed border-gray-400 rounded-3xl items-center justify-center mb-20"
+          className="w-80 h-80 border-2 border-dashed border-gray-400 rounded-3xl items-center justify-center"
           disabled={isUploading}
         >
           {isUploading ? (
@@ -152,9 +154,9 @@ export default function CallSummaryScreen() {
 
         {/* Success Message */}
         {imageUrl && (
-          <View className="mb-8">
+          <View className="absolute bottom-12">
             <Text className="text-green-600 font-semibold text-center text-lg">
-              ✅ Photo uploaded successfully!
+              Photo uploaded!
             </Text>
           </View>
         )}
@@ -166,28 +168,33 @@ export default function CallSummaryScreen() {
         <View className="flex-row justify-between mx-4 mb-6">
           <TouchableOpacity
             onPress={handleNoThanks}
-            className="bg-gray-400 px-8 py-4 rounded-full"
-            style={{ minWidth: 120 }}
+            className="bg-gray-400 h-32 w-32 rounded-full items-center justify-center"
           >
-            <Text className="text-white font-semibold text-lg text-center">No thanks</Text>
+            <Text className="text-white font-semibold text-lg text-center">No</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
             onPress={handleContinue}
-            className="bg-green-600 px-8 py-4 rounded-full"
-            style={{ minWidth: 120 }}
+            disabled={!imageUrl} // disables button if imageUrl is falsy
+            className={`h-32 w-32 rounded-full bg-green-700 items-center justify-center ${!imageUrl ? 'opacity-50' : 'opacity-100'}`}
           >
-            <Text className="text-white font-semibold text-lg text-center">Continue</Text>
+            <MaterialIcons name="navigate-next" size={48} color="white" />
           </TouchableOpacity>
+
         </View>
         
         {/* Delete Button */}
         <View className="items-center">
           <TouchableOpacity
             onPress={() => router.push('/(tabs)/entries')}
-            className="bg-red-600 p-3 rounded-full"
+            className="bg-red-400 h-16 w-16 rounded-full items-center justify-center"
           >
-            <AntDesign name="delete" size={24} color="white" />
+            <EvilIcons 
+              name="trash" 
+              size={36} 
+              color="white" 
+            />
+
           </TouchableOpacity>
         </View>
       </View>
