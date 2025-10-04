@@ -14,7 +14,7 @@ $ cd backend ; python -m venv .venv # create virtual env
 $ source .venv/bin/activate # unix/linux
 > .venv\Scripts\activate # windows
 $ pip install -r requirements.txt # install dependencies for app
-$ fastapi dev # or fastapi run for prod
+$ uvicorn main:app --host 0.0.0.0 --port 8000 # or fastapi run for prod
 
 # running the react native app on expo
 $ cd frontend
