@@ -58,7 +58,11 @@ export default function WrappedScreen() {
             <Text className='text-xl font-normal'>this is a another quote the user has said in their calls said using <Text className='font-bold'>keyword</Text></Text>
             <Image
               source={require('@/assets/images/entries_icon.png')}
-              style={{ width: 100, height: 100 }}
+              style={{
+                width: 100,
+                height: 100,
+                transform: [{ rotate: '-90deg' }] // <- this actually rotates it
+              }}
             />
           </View>
 
