@@ -1,103 +1,138 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
-
-export default function HomeScreen() {
+export default function WrappedScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
+    <View className="flex-1 bg-primary">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Header Section */}
+        <View className="pt-16 pb-8 px-6 bg-primary">
+          <View className="items-center mb-6">
+            <Image
+              source={require('../../assets/images/wyd_logo.png')}
+              style={{ width: 80, height: 80 }}
+              className="mb-4"
             />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+            <Text className="text-2xl font-bold text-secondary text-center">
+              Your Week Wrapped
+            </Text>
+            <Text className="text-gray-600 text-center mt-2">
+              Discover insights from your conversations
+            </Text>
+          </View>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-        
-        {/* NativeWind Red Text Test */}
-        <Text className="text-red-800 text-4xl font-bold">
-          🔴 This text should be RED if NativeWind works!
-        </Text>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* Stats Cards - Alternating Layout */}
+        <View className="px-6 pb-8">
+          
+          {/* Left Aligned Card */}
+          <View className="mb-6">
+            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
+              <Text className="text-4xl font-bold text-tertiary mb-2">127</Text>
+              <Text className="text-secondary font-medium">
+                minutes of conversations this week
+              </Text>
+            </View>
+          </View>
+
+          {/* Right Aligned Card */}
+          <View className="mb-6">
+            <View className="bg-white rounded-2xl p-6 shadow-sm ml-12">
+              <Text className="text-4xl font-bold text-tertiary mb-2">2,847</Text>
+              <Text className="text-secondary font-medium">
+                words spoken. That's longer than a short story!
+              </Text>
+            </View>
+          </View>
+
+          {/* Left Aligned Card */}
+          <View className="mb-6">
+            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
+              <Text className="text-2xl font-bold text-secondary mb-3">
+                Most Used Word
+              </Text>
+              <Text className="text-5xl font-bold text-tertiary mb-2">"amazing"</Text>
+              <Text className="text-gray-600">
+                Used 23 times this week
+              </Text>
+            </View>
+          </View>
+
+          {/* Right Aligned Card */}
+          <View className="mb-6">
+            <View className="bg-white rounded-2xl p-6 shadow-sm ml-12">
+              <Text className="text-2xl font-bold text-secondary mb-3">
+                Mood Breakdown
+              </Text>
+              <View className="space-y-2">
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-600">😊 Positive</Text>
+                  <Text className="font-bold text-secondary">68%</Text>
+                </View>
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-600">😐 Neutral</Text>
+                  <Text className="font-bold text-secondary">24%</Text>
+                </View>
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-600">😔 Negative</Text>
+                  <Text className="font-bold text-secondary">8%</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Left Aligned Card */}
+          <View className="mb-6">
+            <View className="bg-white rounded-2xl p-6 shadow-sm mr-12">
+              <Text className="text-2xl font-bold text-secondary mb-3">
+                Conversation Topics
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                <View className="bg-primary px-3 py-1 rounded-full">
+                  <Text className="text-secondary text-sm">work</Text>
+                </View>
+                <View className="bg-primary px-3 py-1 rounded-full">
+                  <Text className="text-secondary text-sm">friends</Text>
+                </View>
+                <View className="bg-primary px-3 py-1 rounded-full">
+                  <Text className="text-secondary text-sm">goals</Text>
+                </View>
+                <View className="bg-primary px-3 py-1 rounded-full">
+                  <Text className="text-secondary text-sm">travel</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Right Aligned Card - Quote */}
+          <View className="mb-6">
+            <View className="bg-tertiary rounded-2xl p-6 shadow-sm ml-12">
+              <Text className="text-3xl text-white mb-3">"</Text>
+              <Text className="text-white text-lg italic mb-3">
+                I want to be more intentional with my time and really focus on what matters.
+              </Text>
+              <Text className="text-pink-200 text-sm">
+                - You, on Tuesday
+              </Text>
+            </View>
+          </View>
+
+          {/* Full Width Summary Card */}
+          <View className="mb-8">
+            <View className="bg-secondary rounded-2xl p-6 shadow-sm">
+              <Text className="text-2xl font-bold text-white mb-3">
+                This Week's Insight
+              </Text>
+              <Text className="text-gray-200 text-lg leading-relaxed">
+                You've been reflecting a lot on personal growth and making meaningful connections. 
+                Your conversations show a clear focus on building better habits and being more present 
+                in your daily life.
+              </Text>
+            </View>
+          </View>
+
+        </View>
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
