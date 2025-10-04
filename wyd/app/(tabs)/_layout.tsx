@@ -1,40 +1,82 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
+import { FontAwesome5 } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { View } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+
+    // this is the navbar
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#B85C71",
+        tabBarInactiveTintColor: "#191E44",
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: "#F9CDCA",
+          paddingTop: 10,
+          height: 90,
+        }
       }}>
       <Tabs.Screen
         name="entries"
         options={{
           title: 'entries',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="view-grid" size={28} color={color} />
+          ),
+          tabBarLabelStyle: {
+            marginTop: 5,
+            fontSize: 10,
+            color: '#191E44'
+          }
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: '',
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                backgroundColor: '#191E44',
+                width: 80,
+                height: 80,
+                borderRadius: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: -40,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="phone-hangup-outline"
+                size={28}
+                color="white"
+              />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="wrapped"
         options={{
           title: 'wrapped',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: 'chat',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="message.fill" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="calendar-outline" size={28} color={color} />
+          ),
+          tabBarLabelStyle: {
+            marginTop: 5,
+            fontSize: 10,
+            color: '#191E44'
+          },
         }}
       />
     </Tabs>
