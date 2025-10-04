@@ -1,143 +1,3 @@
-// import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
-// import { useState } from 'react';
-// import { router } from 'expo-router';
-
-// export default function EntriesScreen() {
-//   const [selectedFilter, setSelectedFilter] = useState('all');
-
-//   // Sample data with sentiment
-//   const allEntries = [
-//     { id: 1, title: "Today's Reflection", content: "Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things Had a great day learning new things", date: "Oct 4, 2025", sentiment: "positive", type: "goals" },
-//     { id: 2, title: "Morning Thoughts", content: "Woke up feeling energized and ready to tackle the day...", date: "Oct 3, 2025", sentiment: "positive", type: "thoughts" },
-//     { id: 3, title: "Evening Gratitude", content: "Grateful for the people in my life and the opportunities...", date: "Oct 2, 2025", sentiment: "positive", type: "gratitude" },
-//     { id: 4, title: "Weekend Vibes", content: "Spent quality time with family and friends...", date: "Oct 1, 2025", sentiment: "positive", type: "social" },
-//     { id: 5, title: "Work Insights", content: "Learned something valuable about teamwork today...", date: "Sep 30, 2025", sentiment: "neutral", type: "work" },
-//     { id: 6, title: "Personal Growth", content: "Reflecting on how much I've grown this year...", date: "Sep 29, 2025", sentiment: "positive", type: "growth" },
-//     { id: 7, title: "Tough Day", content: "Today was challenging and I felt overwhelmed with everything...", date: "Sep 28, 2025", sentiment: "negative", type: "challenges" },
-//     { id: 8, title: "Regular Tuesday", content: "Nothing special happened today, just a normal routine...", date: "Sep 27, 2025", sentiment: "neutral", type: "routine" },
-//     { id: 9, title: "Feeling Down", content: "Struggling with some personal issues and feeling quite low...", date: "Sep 26, 2025", sentiment: "negative", type: "emotions" },
-//     { id: 10, title: "Celebration Time", content: "Got promoted at work today! So excited and proud of myself...", date: "Sep 25, 2025", sentiment: "positive", type: "achievements" },
-//     { id: 11, title: "Rainy Day Thoughts", content: "Weather is gloomy and matching my mood today...", date: "Sep 24, 2025", sentiment: "negative", type: "emotions" },
-//   ];
-
-//   // Filter entries based on selected filter
-//   const entries = selectedFilter === 'all' 
-//     ? allEntries 
-//     : allEntries.filter(entry => entry.sentiment === selectedFilter);
-
-//   // Helper function to truncate text to first 20 words
-//   const truncateToWords = (text, wordCount = 20) => {
-//     const words = text.split(' ');
-//     if (words.length <= wordCount) return text;
-//     return words.slice(0, wordCount).join(' ') + '...';
-//   };
-
-//   const getSentimentColor = (sentiment) => {
-//     switch (sentiment) {
-//       case 'positive': return 'text-green-600';
-//       case 'negative': return 'text-red-600';
-//       case 'neutral': return 'text-gray-600';
-//       default: return 'text-gray-600';
-//     }
-//   };
-
-//   const getSentimentEmoji = (sentiment) => {
-//     switch (sentiment) {
-//       case 'positive': return '😊';
-//       case 'negative': return '😔';
-//       case 'neutral': return '😐';
-//       default: return '😐';
-//     }
-//   };
-
-//   return (
-//     <View className="flex-1 bg-white">
-
-//       <View className="flex-row items-center px-6 pb-6 pt-16">
-//         <Image
-//           source={require('@/assets/images/entries_icon.png')}
-//           className="w-16 h-16 -rotate-90 mr-1"
-//           resizeMode="contain"
-//         />
-//         <Text className="text-3xl font-bold text-secondary">entries</Text>
-//       </View>
-
-//       {/* ScrollView with primary background */}
-//       <ScrollView 
-//         className="flex-1 bg-primary rounded-t-[64px] pt-6"
-//         showsVerticalScrollIndicator={false}
-//         contentContainerStyle={{ padding: 16 }}
-//       >
-//         {/* Filter Buttons inside ScrollView */}
-//         <View className="my-6 flex items-center">
-//           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-//             <TouchableOpacity
-//               onPress={() => setSelectedFilter('all')}
-//               className={`px-4 py-2 rounded-full mr-2 ${selectedFilter === 'all' ? 'bg-secondary' : 'bg-white/80'}`}
-//             >
-//               <Text className={`font-medium ${selectedFilter === 'all' ? 'text-white' : 'text-secondary'}`}>All</Text>
-//             </TouchableOpacity>
-//             <TouchableOpacity
-//               onPress={() => setSelectedFilter('positive')}
-//               className={`px-4 py-2 rounded-full mr-2 ${selectedFilter === 'positive' ? 'bg-secondary' : 'bg-white/80'}`}
-//             >
-//               <Text className={`font-medium ${selectedFilter === 'positive' ? 'text-white' : 'text-secondary'}`}>😊 Positive</Text>
-//             </TouchableOpacity>
-//             <TouchableOpacity
-//               onPress={() => setSelectedFilter('neutral')}
-//               className={`px-4 py-2 rounded-full mr-2 ${selectedFilter === 'neutral' ? 'bg-secondary' : 'bg-white/80'}`}
-//             >
-//               <Text className={`font-medium ${selectedFilter === 'neutral' ? 'text-white' : 'text-secondary'}`}>😐 Neutral</Text>
-//             </TouchableOpacity>
-//             <TouchableOpacity
-//               onPress={() => setSelectedFilter('negative')}
-//               className={`px-4 py-2 rounded-full mr-2 ${selectedFilter === 'negative' ? 'bg-secondary' : 'bg-white/80'}`}
-//             >
-//               <Text className={`font-medium ${selectedFilter === 'negative' ? 'text-white' : 'text-secondary'}`}>😔 Negative</Text>
-//             </TouchableOpacity>
-//           </ScrollView>
-//         </View>
-
-//         {/* Entries */}
-//         {entries.map((entry) => (
-//           <View key={entry.id} className="mt-8 mx-4">
-
-//             {/* Sentiment Tags */}
-//             <View className="flex-row mb-2 px-2">
-//               <View className="bg-secondary px-3 py-1 rounded-full mr-2">
-//                 <Text className="text-white text-sm font-medium">{entry.sentiment}</Text>
-//               </View>
-//               <View className="bg-secondary px-3 py-1 rounded-full">
-//                 <Text className="text-white text-sm font-medium">goals</Text>
-//               </View>
-//             </View>
-
-//             {/* White Card Container */}
-//             <TouchableOpacity 
-//               onPress={() => router.push({
-//                 pathname: "/entry/[id]",
-//                 params: {
-//                   id: entry.id,
-//                   title: entry.title,
-//                   content: entry.content,
-//                   date: entry.date,
-//                   sentiment: entry.sentiment,
-//                   type: entry.type
-//                 }
-//               })}
-//               className="bg-white p-6 rounded-3xl shadow-sm border-l-[6px] border-secondary"
-//             >
-//               {/* content */}
-//               <Text className="text-lg font-bold text-secondary mb-3">{entry.date}</Text>
-//               <Text className="text-gray-700 leading-6 text-base">{truncateToWords(entry.content)}</Text>
-//             </TouchableOpacity>
-//           </View>
-//         ))}
-//       </ScrollView>
-//     </View>
-//   );
-// }
-
 import { Text, View, ScrollView, Image, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -169,7 +29,7 @@ export default function EntriesNewScreen() {
     { 
       id: 1, 
       date: "Oct 6, 2025", 
-      image: "", // Using your first JPG image
+      image: "https://instagram.fyto1-1.fna.fbcdn.net/v/t51.2885-15/524942146_17883656229343832_5204194212605521265_n.jpg?stp=dst-jpg_e35_s640x640_sh0.08_tt6&_nc_ht=instagram.fyto1-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2QEpcryhEFrU-jUiCXZloh78fHG9wZLaTqOF8urzBHgPNhSqmqoMcG4gAyE7-iZUEcabQimt7C2oihW-PIBjjS77&_nc_ohc=y6Dykhfa3hcQ7kNvwHaepRI&_nc_gid=mpZXa3uZkw93O99PrYGAWg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfeMyZOilHChBDLRXPtB2nPoFApK--o1KR2K6AxxcVDhdA&oe=68E7776D&_nc_sid=8b3546", // Using your first JPG image
       fullContent: "Today was such a beautiful day! I captured this amazing moment that really made me reflect on how grateful I am for the little things in life. Sometimes the best memories come from the most unexpected places.",
       content: get_shortened_content("Today was such a beautiful day! I captured this amazing moment that really made me reflect on how grateful I am for the little things in life. Sometimes the best memories come from the most unexpected places."),
       type: "gratitude",
@@ -178,7 +38,7 @@ export default function EntriesNewScreen() {
     { 
       id: 2, 
       date: "Oct 5, 2025", 
-      image: "", // Using your second JPG image
+      image: "https://instagram.fyto1-1.fna.fbcdn.net/v/t51.29350-15/472263951_876024514425101_1105479332412899958_n.jpg?stp=dst-jpg_e35_p640x640_sh0.08_tt6&_nc_ht=instagram.fyto1-1.fna.fbcdn.net&_nc_cat=105&_nc_oc=Q6cZ2QEpcryhEFrU-jUiCXZloh78fHG9wZLaTqOF8urzBHgPNhSqmqoMcG4gAyE7-iZUEcabQimt7C2oihW-PIBjjS77&_nc_ohc=VWupxIX1yRMQ7kNvwEZsXx1&_nc_gid=mpZXa3uZkw93O99PrYGAWg&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AffKFmbafAMpsRtCfZW9i-yWh8ET74Bq7vKK1coY4mCs9g&oe=68E75D45&_nc_sid=8b3546", // Using your second JPG image
       fullContent: "Had an incredible experience today that I wanted to remember forever. This photo captures exactly how I was feeling - peaceful, content, and truly present in the moment.",
       content: get_shortened_content("Had an incredible experience today that I wanted to remember forever. This photo captures exactly how I was feeling - peaceful, content, and truly present in the moment."),
       type: "reflection",
@@ -196,7 +56,7 @@ export default function EntriesNewScreen() {
     { 
       id: 4, 
       date: "Oct 3, 2025", 
-      image: "", // placeholder for photo URL
+      image: "https://instagram.fyto1-2.fna.fbcdn.net/v/t51.29350-15/467654538_868696888669939_9122512832380238266_n.jpg?stp=dst-jpg_e35_p1080x1080_tt6&_nc_ht=instagram.fyto1-2.fna.fbcdn.net&_nc_cat=107&_nc_oc=Q6cZ2QEUwL6PWsE3S9ISRuAGnyBfS4wUBovOy2y2dEIQEpHrstYP-mK7AUyr2aZSlylTdW6HOqYdFHaEupPevw06W91G&_nc_ohc=8H5F-yeAMbsQ7kNvwGXjQtG&_nc_gid=cJDrd_2nqSHYzbyZkjhKxA&edm=APU89FABAAAA&ccb=7-5&ig_cache_key=MzUwNDQ2NzcyMjc4OTk1NjczOA%3D%3D.3-ccb7-5&oh=00_Afc0-PXd6RVRb9LoSLDi5IC7Utuk-lUZs5vVyzIIxyi8Wg&oe=68E76A4B&_nc_sid=bc0c2c", // placeholder for photo URL
       fullContent: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla.",
       content: get_shortened_content("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed vestibulum nulla, eu tincidunt nulla."),
       type: "routine",

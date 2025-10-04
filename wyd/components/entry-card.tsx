@@ -49,22 +49,27 @@ export default function EntryCard({ item, cardWidth }: EntryCardProps) {
     >
       {/* Image or colored background area */}
       <View 
-        className="h-48 w-full flex items-center justify-center" 
+        className="flex items-center justify-center" 
         style={{ 
-          backgroundColor: item.image ? 'transparent' : getRandomBackgroundColor(item.id)
+          backgroundColor: item.image ? 'transparent' : getRandomBackgroundColor(item.id),
+          width: cardWidth,
+          height: cardWidth
         }}
       >
         {item.image ? (
           <Image
             source={typeof item.image === 'string' ? { uri: item.image } : item.image}
-            className="w-16 h-16 -rotate-45 opacity-80"
-            resizeMode="contain"
+            style={{
+              width: cardWidth,
+              aspectRatio: 1,
+            }}
+            resizeMode="cover"
           />
         ) : (
           <Image
             source={require('@/assets/images/wyd_logo.png')}
             className="w-16 h-16 -rotate-45 opacity-60"
-            resizeMode="contain"
+            resizeMode="cover"
           />
         )}
       </View>

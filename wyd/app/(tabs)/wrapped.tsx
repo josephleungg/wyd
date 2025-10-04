@@ -63,17 +63,6 @@ export default function WrappedScreen() {
           </View>
 
           <View className="absolute inset-y-0 left-1/2 w-[2px] bg-tertiary" />
-          <AntDesign
-            name="caret-down"
-            size={28}
-            color="#B85C71"
-            style={{
-              position: 'absolute',
-              bottom: -20,
-              left: '50%',
-              transform: [{ translateX: -13 }], // centers arrow
-            }}
-          />
 
           <View className='flex-1 flex-col items-center gap-12'>
             <Text className='text-xl font-normal'>this is a quote the user said using <Text className='font-bold'>keyword</Text></Text>

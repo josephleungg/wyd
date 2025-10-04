@@ -38,7 +38,7 @@ const Chat = () => {
             className='flex-1'
           >
             {/* Cancel button with margin */}
-            <View className='pt-16 pl-6'>
+            <View className='absolute top-16 left-6'>
               <TouchableOpacity
                 className='bg-white/20 rounded-full p-3 self-start mt-8 ml-4'
                 onPress={handleCancel}
@@ -53,7 +53,7 @@ const Chat = () => {
 
             {/* Main content */}
             <View className='flex-1 justify-center items-center'>
-              <View className='justify-around items-center h-2/3'>
+              <View className='justify-around items-center h-screen'>
                 <Text className='text-white font-semibold text-6xl'>wyd?</Text>
 
                 <TouchableOpacity
