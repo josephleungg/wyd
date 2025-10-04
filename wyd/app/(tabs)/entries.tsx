@@ -64,7 +64,7 @@ export default function EntriesScreen() {
 
       {/* ScrollView with primary background */}
       <ScrollView 
-        className="flex-1 bg-primary rounded-t-[64px] pt-6"
+        className="flex-1 bg-primary rounded-t-[40px] pt-6"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16 }}
       >
