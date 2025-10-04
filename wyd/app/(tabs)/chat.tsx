@@ -18,12 +18,16 @@ const Chat = () => {
   const handleEndChat = () => {
     setIsClosing(true);
     setTimeout(() => {
-      router.push('/entries');
+      router.push('/call-summary');
     }, 600); // delay slightly longer for color fade
   };
 
+  const handleCancel = () => {
+    router.push('/entries');
+  };
+
   return (
-    <View className='flex-1 items-center justify-center bg-secondary'>
+    <View className='flex-1 bg-secondary'>
       <AnimatePresence>
         {!isClosing && (
           <MotiView
@@ -31,21 +35,38 @@ const Chat = () => {
             from={{ opacity: 0, scale: 0.9, translateY: 20 }}
             animate={{ opacity: 1, scale: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 400 }}
-            style={{ alignItems: 'center', justifyContent: 'center' }}
+            className='flex-1'
           >
-            <View className='h-screen justify-around items-center'>
-              <Text className='text-white font-semibold text-6xl'>wyd.</Text>
-
+            {/* Cancel button with margin */}
+            <View className='pt-16 pl-6'>
               <TouchableOpacity
-                className='bg-red-600 p-7 rounded-full'
-                onPress={handleEndChat}
+                className='bg-white/20 rounded-full p-3 self-start mt-8 ml-4'
+                onPress={handleCancel}
               >
                 <MaterialCommunityIcons
-                  name='phone-hangup-outline'
-                  size={36}
+                  name='close'
+                  size={24}
                   color='white'
                 />
               </TouchableOpacity>
+            </View>
+
+            {/* Main content */}
+            <View className='flex-1 justify-center items-center'>
+              <View className='justify-around items-center h-2/3'>
+                <Text className='text-white font-semibold text-6xl'>wyd?</Text>
+
+                <TouchableOpacity
+                  className='bg-red-600 p-7 rounded-full'
+                  onPress={handleEndChat}
+                >
+                  <MaterialCommunityIcons
+                    name='phone-hangup-outline'
+                    size={36}
+                    color='white'
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </MotiView>
         )}
