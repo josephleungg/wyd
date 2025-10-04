@@ -3,16 +3,17 @@ import { View, Text, TouchableOpacity, Alert, ActivityIndicator, Image } from 'r
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Constants from 'expo-constants';
 
 export default function CallSummaryScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [imgurUrl, setImgurUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  // Imgur API configuration
-  const IMGUR_CLIENT_ID = 'YOUR_IMGUR_CLIENT_ID'; // You'll need to replace this
+  // ImageBB API configuration
+  const IMAGEBB_API_KEY = Constants.expoConfig?.extra?.IMAGEBB_API_KEY || '';
 
-  const uploadToImgur = async (imageUri: string): Promise<string | null> => {
+  const uploadToImageBB = async (imageUri: string): Promise<string | null> => {
     try {
       setIsUploading(true);
       
@@ -24,28 +25,25 @@ export default function CallSummaryScreen() {
         name: 'photo.jpg',
       } as any);
 
-      const response = await fetch('https://api.imgur.com/3/image', {
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMAGEBB_API_KEY}`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`,
-          'Content-Type': 'multipart/form-data',
-        },
         body: formData,
       });
 
       const data = await response.json();
       
       if (data.success) {
-        const imageUrl = data.data.link;
-        setImgurUrl(imageUrl);
-        Alert.alert('Success!', `Image uploaded successfully!\nURL: ${imageUrl}`);
-        return imageUrl;
+        const uploadedImageUrl = data.data.url;
+        setImageUrl(uploadedImageUrl);
+        console.log('Image uploaded successfully! URL:', uploadedImageUrl);
+        Alert.alert('Success!', 'Image uploaded successfully!');
+        return uploadedImageUrl;
       } else {
-        throw new Error(data.data?.error || 'Upload failed');
+        throw new Error(data.error?.message || 'Upload failed');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      Alert.alert('Upload Failed', 'Failed to upload image to Imgur. Please try again.');
+      Alert.alert('Upload Failed', 'Failed to upload image. Please try again.');
       return null;
     } finally {
       setIsUploading(false);
@@ -72,7 +70,7 @@ export default function CallSummaryScreen() {
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
       // Automatically upload after selection
-      await uploadToImgur(result.assets[0].uri);
+      await uploadToImageBB(result.assets[0].uri);
     }
   };
 
@@ -95,7 +93,7 @@ export default function CallSummaryScreen() {
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
       // Automatically upload after taking photo
-      await uploadToImgur(result.assets[0].uri);
+      await uploadToImageBB(result.assets[0].uri);
     }
   };
 
@@ -153,7 +151,7 @@ export default function CallSummaryScreen() {
         </TouchableOpacity>
 
         {/* Success Message */}
-        {imgurUrl && (
+        {imageUrl && (
           <View className="mb-8">
             <Text className="text-green-600 font-semibold text-center text-lg">
               ✅ Photo uploaded successfully!
@@ -176,7 +174,7 @@ export default function CallSummaryScreen() {
           
           <TouchableOpacity
             onPress={handleContinue}
-            className="bg-red-400 px-8 py-4 rounded-full"
+            className="bg-green-600 px-8 py-4 rounded-full"
             style={{ minWidth: 120 }}
           >
             <Text className="text-white font-semibold text-lg text-center">Continue</Text>
