@@ -34,7 +34,8 @@ export default function EntryCard({ item, cardWidth }: EntryCardProps) {
         content: item.fullContent,
         date: item.date,
         sentiment: item.sentiment,
-        type: item.type
+        type: item.type,
+        image: item.image
       }
     });
   };

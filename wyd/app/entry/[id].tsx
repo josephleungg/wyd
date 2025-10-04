@@ -1,10 +1,10 @@
-import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function EntryDetailScreen() {
-  const { id, title, content, date, sentiment, type } = useLocalSearchParams();
+  const { id, title, content, date, sentiment, type, image } = useLocalSearchParams();
 
   // Convert params to proper types
   const entry = {
@@ -13,7 +13,8 @@ export default function EntryDetailScreen() {
     content: content as string,
     date: date as string,
     sentiment: sentiment as string,
-    type: type as string
+    type: type as string,
+    image: image as string
   };
 
   if (!entry.id || !entry.title) {
@@ -67,6 +68,20 @@ export default function EntryDetailScreen() {
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
+
+        {entry.image ? (
+          <Image
+            source={typeof entry.image === 'string' ? { uri: entry.image } : entry.image}
+            style={{
+              width: '100%',       // full width of ScrollView content
+              height: 400,         // fixed height, adjust as needed
+              borderRadius: 12,    // optional: rounded corners
+              marginBottom: 20,    // spacing below image
+            }}
+            resizeMode="cover"
+          />
+        ) : ''}
+
         {/* Tags */}
         <View className="flex-row mb-6">
           <View className="bg-secondary px-4 py-2 rounded-full mr-3">
