@@ -85,7 +85,7 @@ export default function EntriesNewScreen() {
         sentiment: apiEntry.sentiment
       }));
       
-      setEntries(transformedEntries);
+      setEntries(transformedEntries.reverse());
     } catch (error) {
       console.error('Error fetching entries:', error);
       // Keep empty array if API fails
