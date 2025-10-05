@@ -11,15 +11,15 @@ export default function CallSummaryScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ImageBB API configuration
   const IMAGEBB_API_KEY = Constants.expoConfig?.extra?.IMAGEBB_API_KEY || '';
 
+  // ✅ Upload image to imgbb and return the hosted URL
   const uploadToImageBB = async (imageUri: string): Promise<string | null> => {
     try {
       setIsUploading(true);
-      
-      // Create form data
       const formData = new FormData();
       formData.append('image', {
         uri: imageUri,
@@ -33,11 +33,10 @@ export default function CallSummaryScreen() {
       });
 
       const data = await response.json();
-      
       if (data.success) {
         const uploadedImageUrl = data.data.url;
         setImageUrl(uploadedImageUrl);
-        console.log('Image uploaded successfully! URL:', uploadedImageUrl);
+        console.log('✅ Image uploaded to imgbb:', uploadedImageUrl);
         Alert.alert('Success!', 'Image uploaded successfully!');
         return uploadedImageUrl;
       } else {
@@ -52,16 +51,39 @@ export default function CallSummaryScreen() {
     }
   };
 
+  // ✅ Send the image URL (or empty string) to your backend
+  const sendToBackend = async (imgurUrl: string) => {
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`http://${process.env.EXPO_PUBLIC_IP_ADDRESS}:8000/entries/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imgur_url: imgurUrl }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      console.log('✅ Sent to backend:', imgurUrl);
+      Alert.alert('Done!', 'Entry uploaded successfully!');
+      router.push('/(tabs)/entries');
+    } catch (error) {
+      console.error('Backend upload failed:', error);
+      Alert.alert('Error', 'Failed to save entry to backend.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const pickImage = async () => {
-    // Request permission
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert('Permission Required', 'Permission to access camera roll is required!');
       return;
     }
 
-    // Launch image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -71,21 +93,17 @@ export default function CallSummaryScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
-      // Automatically upload after selection
       await uploadToImageBB(result.assets[0].uri);
     }
   };
 
   const takePhoto = async () => {
-    // Request permission
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert('Permission Required', 'Permission to access camera is required!');
       return;
     }
 
-    // Launch camera
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
@@ -94,47 +112,43 @@ export default function CallSummaryScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setSelectedImage(result.assets[0].uri);
-      // Automatically upload after taking photo
       await uploadToImageBB(result.assets[0].uri);
     }
   };
 
   const showImageOptions = () => {
-    Alert.alert(
-      'Select Image',
-      'Choose how you want to add a photo',
-      [
-        { text: 'Camera', onPress: takePhoto },
-        { text: 'Gallery', onPress: pickImage },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    Alert.alert('Select Image', 'Choose how you want to add a photo', [
+      { text: 'Camera', onPress: takePhoto },
+      { text: 'Gallery', onPress: pickImage },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
-  const handleNoThanks = () => {
-    router.push('/(tabs)/entries');
+  // ✅ “No” button sends empty string
+  const handleNoThanks = async () => {
+    await sendToBackend('');
   };
 
-  const handleContinue = () => {
-    // Navigate back to entries with the image URL if available
-    router.push('/(tabs)/entries');
+  // ✅ “Continue” sends uploaded image URL
+  const handleContinue = async () => {
+    if (!imageUrl) {
+      Alert.alert('Hold up', 'Please upload a photo first!');
+      return;
+    }
+    await sendToBackend(imageUrl);
   };
 
   return (
     <View className="flex-1 bg-gray-50 px-8">
-      {/* Main Content Container */}
       <View className="flex-1 justify-center items-center">
-        
-        {/* Question Text */}
         <Text className="text-4xl font-bold text-secondary text-center mb-16 leading-tight">
           would you like{'\n'}to add a photo{'\n'}from your{'\n'}day?
         </Text>
 
-        {/* Photo Upload Area */}
         <TouchableOpacity
           onPress={showImageOptions}
           className="w-80 h-80 border-2 border-dashed border-gray-400 rounded-3xl items-center justify-center"
-          disabled={isUploading}
+          disabled={isUploading || isSubmitting}
         >
           {isUploading ? (
             <View className="items-center">
@@ -142,59 +156,54 @@ export default function CallSummaryScreen() {
               <Text className="text-gray-500 text-lg mt-4">Uploading...</Text>
             </View>
           ) : selectedImage ? (
-            <Image 
-              source={{ uri: selectedImage }} 
-              className="w-full h-full rounded-3xl"
-              resizeMode="cover"
-            />
+            <Image source={{ uri: selectedImage }} className="w-full h-full rounded-3xl" resizeMode="cover" />
           ) : (
             <AntDesign name="camera" size={80} color="#9CA3AF" />
           )}
         </TouchableOpacity>
 
-        {/* Success Message */}
         {imageUrl && (
           <View className="absolute bottom-12">
-            <Text className="text-green-600 font-semibold text-center text-lg">
-              Photo uploaded!
-            </Text>
+            <Text className="text-green-600 font-semibold text-center text-lg">Photo uploaded!</Text>
           </View>
         )}
-
       </View>
 
-      {/* Bottom Buttons */}
       <View className="pb-12">
         <View className="flex-row justify-between mx-4 mb-6">
           <TouchableOpacity
             onPress={handleNoThanks}
+            disabled={isSubmitting}
             className="bg-gray-400 h-32 w-32 rounded-full items-center justify-center"
           >
-            <Text className="text-white font-semibold text-lg text-center">No</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={handleContinue}
-            disabled={!imageUrl} // disables button if imageUrl is falsy
-            className={`h-32 w-32 rounded-full bg-green-700 items-center justify-center ${!imageUrl ? 'opacity-50' : 'opacity-100'}`}
-          >
-            <MaterialIcons name="navigate-next" size={48} color="white" />
+            {isSubmitting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-semibold text-lg text-center">No</Text>
+            )}
           </TouchableOpacity>
 
+          <TouchableOpacity
+            onPress={handleContinue}
+            disabled={!imageUrl || isSubmitting}
+            className={`h-32 w-32 rounded-full bg-green-700 items-center justify-center ${
+              !imageUrl ? 'opacity-50' : 'opacity-100'
+            }`}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <MaterialIcons name="navigate-next" size={48} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
-        
-        {/* Delete Button */}
+
         <View className="items-center">
           <TouchableOpacity
             onPress={() => router.push('/(tabs)/entries')}
             className="bg-red-400 h-16 w-16 rounded-full items-center justify-center"
           >
-            <EvilIcons 
-              name="trash" 
-              size={36} 
-              color="white" 
-            />
-
+            <EvilIcons name="trash" size={36} color="white" />
           </TouchableOpacity>
         </View>
       </View>
