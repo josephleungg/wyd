@@ -77,12 +77,12 @@ export default function TranscriptScreen() {
         </View>
 
         {/* Placeholder Transcript Content */}
-        <View className="border-l-8 border-secondary pl-6">
+        <View className="border-l-4 border-secondary pl-6">
           <Text className="text-gray-700 leading-7 text-base">
             {PLACEHOLDER_TRANSCRIPT}
           </Text>
         </View>
-        
+
       </ScrollView>
     </View>
   );
