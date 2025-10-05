@@ -55,7 +55,7 @@ export default function EntriesNewScreen() {
       setLoading(true);
       
       console.log('Attempting to fetch from API...');
-      const apiUrl = `http://${process.env.EXPO_PUBLIC_IP_ADDRESS || '172.20.10.7'}:8000/entries`;
+      const apiUrl = `http://${process.env.EXPO_PUBLIC_IP_ADDRESS}:8000/entries`;
       console.log('API URL:', apiUrl);
       const response = await fetch(apiUrl, {
         method: 'GET',
