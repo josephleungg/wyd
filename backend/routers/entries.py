@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import entries as entries_crud
 from db import schema, conn
@@ -14,15 +14,22 @@ def get_conversation_id(API_KEY: str) -> str:
         "xi-api-key": API_KEY
     }
 
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        conversations = response.json()
-        if conversations and len(conversations) > 0:
-            print(conversations["conversations"][0]["conversation_id"])
-            return conversations["conversations"][0]["conversation_id"]
+    try:
+        response = requests.get(url, headers=headers, timeout=10)  # 10 second timeout
+        
+        if response.status_code == 200:
+            conversations = response.json()
+            if conversations and len(conversations) > 0:
+                print(conversations["conversations"][0]["conversation_id"])
+                return conversations["conversations"][0]["conversation_id"]
+            else:
+                raise Exception("No conversations found")
         else:
-            raise Exception("No conversations found")
+            raise Exception(f"Failed to get conversations. Status: {response.status_code}")
+    except requests.exceptions.Timeout:
+        raise Exception("Request to ElevenLabs API timed out")
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Error connecting to ElevenLabs API: {str(e)}")
 
 def get_conversation_details(API_KEY: str, conversation_id: str) -> dict:
     url = f"https://api.elevenlabs.io/v1/convai/conversations/{conversation_id}"
@@ -30,23 +37,28 @@ def get_conversation_details(API_KEY: str, conversation_id: str) -> dict:
         "xi-api-key": API_KEY
     }
 
-    response = requests.get(url, headers=headers)
+    try:
+        response = requests.get(url, headers=headers, timeout=10)  # 10 second timeout
 
-    if response.status_code == 200:
-        transcript = response.json()
+        if response.status_code == 200:
+            transcript = response.json()
 
-        transcript_filtered = []
+            transcript_filtered = []
 
-        for item in transcript["transcript"]:
-            message_obj = {
-                "role": item["role"],
-                "message": item["message"]
-            }
-            transcript_filtered.append(message_obj)
+            for item in transcript["transcript"]:
+                message_obj = {
+                    "role": item["role"],
+                    "message": item["message"]
+                }
+                transcript_filtered.append(message_obj)
 
-        return transcript_filtered
-    else:
-        raise Exception("Failed to retrieve conversation details")
+            return transcript_filtered
+        else:
+            raise Exception(f"Failed to retrieve conversation details. Status: {response.status_code}")
+    except requests.exceptions.Timeout:
+        raise Exception("Request to ElevenLabs API timed out")
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Error connecting to ElevenLabs API: {str(e)}")
 
 def summarize_with_gemini(API_KEY: str, text: dict) -> str:
     from google import genai
@@ -102,23 +114,28 @@ Conversation data: {text}
 async def upload_entry(entry_data: schema.entries.EntriesCreateRequest, db: Session = Depends(conn.get_db)):
     print("Received entry data:", entry_data)
     
-    API_KEY  = Config.AI_API_KEY
+    API_KEY = Config.AI_API_KEY
     GEMINI_AI_KEY = Config.GEMINI_AI_KEY
 
-    conversation_id = get_conversation_id(API_KEY)
-    conversation_details = get_conversation_details(API_KEY, conversation_id)
-    summary, sentiment, entry_type = summarize_with_gemini(GEMINI_AI_KEY, conversation_details)
+    try:
+        conversation_id = get_conversation_id(API_KEY)
+        conversation_details = get_conversation_details(API_KEY, conversation_id)
+        summary, sentiment, entry_type = summarize_with_gemini(GEMINI_AI_KEY, conversation_details)
 
-    return entries_crud.create_entry(db, conversation_id, summary, sentiment, entry_type, None, entry_data.imgur_url)
+        return entries_crud.create_entry(db, conversation_id, summary, sentiment, entry_type, None, entry_data.imgur_url)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload entry: {str(e)}")
 
 @router.get("/transcript/{id}", response_model=schema.entries.TranscriptResponse)
 async def get_transcript(id: str, db: Session = Depends(conn.get_db)):
-    API_KEY  = Config.AI_API_KEY
+    API_KEY = Config.AI_API_KEY
     
-    conversation_id = entries_crud.get_conversation_id_with_id(db, id)
-    conversation_details = get_conversation_details(API_KEY, conversation_id)
-
-    return {"transcript": conversation_details}
+    try:
+        conversation_id = entries_crud.get_conversation_id_with_id(db, id)
+        conversation_details = get_conversation_details(API_KEY, conversation_id)
+        return {"transcript": conversation_details}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get transcript: {str(e)}")
 
 @router.get("/", response_model=list[schema.entries.EntriesResponse])
 async def get_entries(db: Session = Depends(conn.get_db)):
